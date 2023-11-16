@@ -16,6 +16,17 @@ resource "aws_instance" "worker" {
 
   vpc_security_group_ids = [aws_security_group.worker_sg.id]
 
+  user_data = <<EOF
+#!/bin/bash
+git clone https://github.com/tankhuu/cka.git
+cd cka/setup-vanilla-k8s/scripts/
+./setup-container.sh
+./setup-kubetools.sh
+
+cd 
+kubeadm init > ~/cluster.init.log 2>&1
+EOF
+
 }
 
 resource "aws_security_group" "worker_sg" {
